@@ -6,8 +6,11 @@ package gui;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import gui.util.Alerts;
+import gui.util.Set;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
@@ -59,6 +62,8 @@ public class CalcController implements Initializable {
 	private Button btnDel;
 	@FXML
 	private Button btnC;
+	@FXML
+	private Button btnIgual;
 
 	@FXML
 	public void onBtn0Action() {
@@ -118,7 +123,7 @@ public class CalcController implements Initializable {
 	public void onBtnSomarAction() {
 
 		if (txtResult.getText().length() == 0) {
-
+			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
 		} else {
 
 			number1 = Double.parseDouble(txtResult.getText());
@@ -132,7 +137,7 @@ public class CalcController implements Initializable {
 	public void onBtnSubtrairAction() {
 
 		if (txtResult.getText().length() == 0) {
-
+			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
 		} else {
 			number1 = Double.parseDouble(txtResult.getText());
 			operacao = '-';
@@ -146,7 +151,7 @@ public class CalcController implements Initializable {
 	public void onBtnMultiplicarAction() {
 
 		if (txtResult.getText().length() == 0) {
-
+			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
 		} else {
 
 			number1 = Double.parseDouble(txtResult.getText());
@@ -159,16 +164,28 @@ public class CalcController implements Initializable {
 
 	@FXML
 	public void onBtnDividirAction() throws ArithmeticException {
-		number1 = Double.parseDouble(txtResult.getText());
-		operacao = '/';
-		txtResult.setText("");
-		ponto = false;
+
+		if (txtResult.getText().length() == 0) {
+			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
+		} else {
+
+			number1 = Double.parseDouble(txtResult.getText());
+			operacao = '/';
+			txtResult.setText("");
+			ponto = false;
+		}
+
 	}
 
 	@FXML
 	public void onBtnPontoAction() {
 
-		if (number1 > Math.floor(number1)) {
+		if (txtResult.getText().length() == 0) {
+			txtResult.setText("0.");
+			ponto = true;
+		}
+
+		if (Double.parseDouble(txtResult.getText()) > Math.floor(Double.parseDouble(txtResult.getText()))) {
 			txtResult.setText(txtResult.getText() + ".");
 			ponto = true;
 		} else {
@@ -179,18 +196,23 @@ public class CalcController implements Initializable {
 	@FXML
 	public void onBtnCAction() {
 
-		String texto = txtResult.getText();
-		texto = texto.substring(0, texto.length() - 1);
-		txtResult.setText(texto);
-
-		if (Double.parseDouble(txtResult.getText()) > Math.floor(Double.parseDouble(txtResult.getText()))) {
-			ponto = true;
+		if (txtResult.getText().length() == 0) {
+			txtResult.setText("");
 		} else {
-			ponto = false;
+
+			String texto = txtResult.getText();
+			texto = texto.substring(0, texto.length() - 1);
+			txtResult.setText(texto);
+
+			if (Double.parseDouble(txtResult.getText()) > Math.floor(Double.parseDouble(txtResult.getText()))) {
+				ponto = true;
+			} else {
+				ponto = false;
+			}
 		}
 
 	}
-	
+
 	@FXML
 	public void onBtnDelAction() {
 		txtResult.setText("");
@@ -200,12 +222,37 @@ public class CalcController implements Initializable {
 		operacao = null;
 		ponto = false;
 	}
+
+	@FXML
+	public void onBtnPorcentoAction() {
+
+		if (txtResult.getText().length() == 0) {
+			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
+		} else {
+
+			number1 = Double.parseDouble(txtResult.getText());
+			operacao = '%';
+			ponto = false;
+		}
+
+	}
+
+	public void mostrarResultado(TextField txt) {
+
+		if (Double.parseDouble(txt.getText()) > Math.floor(Double.parseDouble(txt.getText()))) {
+			txtResult.setText(String.valueOf(txt));
+		}else {
+			txtResult.setText(String.valueOf(txt.getText()));
+		}
+
+	}
 	
 	
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		// TODO Auto-generated method stub
+
+		Set.setTextFieldMaxLength(txtResult, 12);
 
 	}
 
