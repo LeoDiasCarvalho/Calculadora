@@ -4,6 +4,7 @@
 package gui;
 
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import gui.util.Alerts;
@@ -21,8 +22,8 @@ import javafx.scene.control.TextField;
 public class CalcController implements Initializable {
 
 	private Double number1 = 0.0, number2 = 0.0, result = 0.0;
-	private Boolean ponto = false;
-	private Character operacao = null;
+	private Boolean ponto = false, porcento = false;
+	private String operacao = null;
 
 	@FXML
 	private TextField txtResult;
@@ -122,12 +123,14 @@ public class CalcController implements Initializable {
 	@FXML
 	public void onBtnSomarAction() {
 
+		Locale.setDefault(Locale.US);
+
 		if (txtResult.getText().length() == 0) {
 			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
 		} else {
 
 			number1 = Double.parseDouble(txtResult.getText());
-			operacao = '+';
+			operacao = "somar";
 			txtResult.setText("");
 			ponto = false;
 		}
@@ -136,11 +139,13 @@ public class CalcController implements Initializable {
 	@FXML
 	public void onBtnSubtrairAction() {
 
+		Locale.setDefault(Locale.US);
+
 		if (txtResult.getText().length() == 0) {
 			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
 		} else {
 			number1 = Double.parseDouble(txtResult.getText());
-			operacao = '-';
+			operacao = "subtrair";
 			txtResult.setText("");
 			ponto = false;
 		}
@@ -150,12 +155,14 @@ public class CalcController implements Initializable {
 	@FXML
 	public void onBtnMultiplicarAction() {
 
+		Locale.setDefault(Locale.US);
+
 		if (txtResult.getText().length() == 0) {
 			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
 		} else {
 
 			number1 = Double.parseDouble(txtResult.getText());
-			operacao = 'x';
+			operacao = "multiplicar";
 			txtResult.setText("");
 			ponto = false;
 		}
@@ -165,12 +172,14 @@ public class CalcController implements Initializable {
 	@FXML
 	public void onBtnDividirAction() throws ArithmeticException {
 
+		Locale.setDefault(Locale.US);
+
 		if (txtResult.getText().length() == 0) {
 			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
 		} else {
 
 			number1 = Double.parseDouble(txtResult.getText());
-			operacao = '/';
+			operacao = "dividir";
 			txtResult.setText("");
 			ponto = false;
 		}
@@ -180,16 +189,19 @@ public class CalcController implements Initializable {
 	@FXML
 	public void onBtnPontoAction() {
 
+		Locale.setDefault(Locale.US);
+
 		if (txtResult.getText().length() == 0) {
 			txtResult.setText("0.");
 			ponto = true;
 		}
 
-		if (Double.parseDouble(txtResult.getText()) > Math.floor(Double.parseDouble(txtResult.getText()))) {
+		if (ponto == true
+				|| Double.parseDouble(txtResult.getText()) > Math.floor(Double.parseDouble(txtResult.getText()))) {
+			txtResult.setText(txtResult.getText());
+		} else {
 			txtResult.setText(txtResult.getText() + ".");
 			ponto = true;
-		} else {
-			txtResult.setText(txtResult.getText());
 		}
 	}
 
@@ -226,28 +238,93 @@ public class CalcController implements Initializable {
 	@FXML
 	public void onBtnPorcentoAction() {
 
-		if (txtResult.getText().length() == 0) {
-			Alerts.mostrarAlerta("Information", null, "Digite um número", AlertType.INFORMATION);
+		Locale.setDefault(Locale.US);
+
+		number2 = Double.parseDouble(txtResult.getText());
+		
+		switch (operacao) {
+		case "somar":
+			result = ((number2 / 100) * number1) + number1;
+			txtResult.setText("");
+			porcento = true;
+			break;
+		case "subtrair":
+			result = number1 - ((number2 / 100) * number1);
+			txtResult.setText("");
+			porcento = true;
+			break;
+		case "multiplicar":
+			result = (number2 / 100) * number1;
+			txtResult.setText("");
+			porcento = true;
+			break;
+		case "dividir":
+			if (number2 == 0) {
+				Alerts.mostrarAlerta("Erro", null, "Número infinito! não pode dividir por 0(zero)", AlertType.ERROR);
+				ponto = false;
+				porcento = false;
+				operacao = null;
+				number1 = 0.0;
+				number2 = 0.0;
+				result = 0.0;
+				txtResult.setText("");
+				break;
+			} else {
+				result = (number1 * 100) / number2;
+				txtResult.setText("");
+				porcento = true;
+				break;
+			}
+		}
+	}
+
+	@FXML
+	public void onBtnIgualAction() {
+
+		Locale.setDefault(Locale.US);
+
+		if (number1 == null || number2 == null) {
+			txtResult.setText(txtResult.getText());
+		} else if (porcento == true) {
+			txtResult.setText(String.format("%.2f", result));
+
 		} else {
 
-			number1 = Double.parseDouble(txtResult.getText());
-			operacao = '%';
-			ponto = false;
+			number2 = Double.parseDouble(txtResult.getText());
+
+			switch (operacao) {
+
+			case "somar":
+				result = number1 + number2;
+				txtResult.setText(String.format("%.2f", result));
+				ponto = false;
+				break;
+
+			case "subtrair":
+				result = number1 - number2;
+				txtResult.setText(String.format("%.2f", result));
+				ponto = false;
+				break;
+
+			case "multiplicar":
+				result = number1 * number2;
+				txtResult.setText(String.format("%.2f", result));
+				ponto = false;
+				break;
+
+			case "dividir":
+				if (number2 == 0) {
+					Alerts.mostrarAlerta("Erro", null, "Resultado infinito! Não pode dividir por 0(zero)!",
+							AlertType.ERROR);
+				} else {
+					result = number1 / number2;
+					txtResult.setText(String.format("%.2f", result));
+					ponto = false;
+				}
+				break;
+			}
 		}
-
 	}
-
-	public void mostrarResultado(TextField txt) {
-
-		if (Double.parseDouble(txt.getText()) > Math.floor(Double.parseDouble(txt.getText()))) {
-			txtResult.setText(String.valueOf(txt));
-		}else {
-			txtResult.setText(String.valueOf(txt.getText()));
-		}
-
-	}
-	
-	
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
