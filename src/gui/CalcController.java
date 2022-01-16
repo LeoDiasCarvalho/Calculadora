@@ -157,12 +157,28 @@ public class CalcController implements Initializable {
 
 	}
 
+	@FXML
 	public void onBtnDividirAction() throws ArithmeticException {
 		number1 = Double.parseDouble(txtResult.getText());
 		operacao = '/';
 		txtResult.setText("");
 		ponto = false;
 	}
+
+	@FXML
+	public void onBtnPontoAction() {
+
+		if (number1 > Math.floor(number1)) {
+			txtResult.setText(txtResult.getText() + ".");
+			ponto = true;
+		} else {
+			txtResult.setText(txtResult.getText());
+		}
+	}
+
+	
+	
+	
 
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
