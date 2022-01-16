@@ -176,7 +176,30 @@ public class CalcController implements Initializable {
 		}
 	}
 
+	@FXML
+	public void onBtnCAction() {
+
+		String texto = txtResult.getText();
+		texto = texto.substring(0, texto.length() - 1);
+		txtResult.setText(texto);
+
+		if (Double.parseDouble(txtResult.getText()) > Math.floor(Double.parseDouble(txtResult.getText()))) {
+			ponto = true;
+		} else {
+			ponto = false;
+		}
+
+	}
 	
+	@FXML
+	public void onBtnDelAction() {
+		txtResult.setText("");
+		number1 = null;
+		number2 = null;
+		result = null;
+		operacao = null;
+		ponto = false;
+	}
 	
 	
 
